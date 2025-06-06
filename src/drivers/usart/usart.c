@@ -26,21 +26,18 @@ void usart_init(void) {
 
     USART1->CR2 &= ~USART_CR2_STOP;
 
-    usart_send('a');
-    uint8_t result;
-    while ( (result = usart_receive())) {
-        usart_send(result);
-    }
+
 }
 
 void usart_send(uint8_t c) {
-    while (!(USART1->SR & USART_SR_TXE)) {
-        USART1->DR = c;
+    while ((USART1->SR & USART_SR_TXE) == 0) {
+
     }
+    USART1->DR = c;
 }
 
 uint8_t usart_receive(void) {
-    while (!(USART1->SR & USART_SR_RXNE)) {
+    while ((USART1->SR & USART_SR_RXNE) == 0) {
 
     }
     return USART1->DR;
