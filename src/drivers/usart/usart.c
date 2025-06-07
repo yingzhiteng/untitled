@@ -4,6 +4,8 @@
 
 #include "usart.h"
 
+
+
 void usart_init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
@@ -66,4 +68,17 @@ void USART1_IRQHandler(void) {
         USART1->DR;
         isToSend=1;
     }
+}
+
+int fputc(int ch, FILE *f) {
+    usart_send(ch);
+    return ch;
+}
+
+int _write(int file, char *ptr, int len) {
+    // 遍历 ptr 指向的缓冲区，逐个字符发送
+    for (int i = 0; i < len; i++) {
+        fputc(*(ptr + i), stdout); // 调用我们自己的 fputc
+    }
+    return len; // 返回实际写入的字节数
 }
