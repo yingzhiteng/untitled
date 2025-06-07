@@ -27,18 +27,43 @@ void usart_init(void) {
     USART1->CR2 &= ~USART_CR2_STOP;
 
 
+    USART1->CR1 |= USART_CR1_RXNEIE;
+    USART1->CR1 |= USART_CR1_IDLEIE;
+
+    NVIC_SetPriorityGrouping(3);
+    NVIC_SetPriority(USART1_IRQn, 2);
+    NVIC_EnableIRQ(USART1_IRQn);
+
 }
 
 void usart_send(uint8_t c) {
-    while ((USART1->SR & USART_SR_TXE) == 0) {
+    while (!(USART1->SR & USART_SR_TXE)) {
 
     }
     USART1->DR = c;
 }
 
-uint8_t usart_receive(void) {
-    while ((USART1->SR & USART_SR_RXNE) == 0) {
 
+
+void usart_sendStr(char* str) {
+    for (int i = 0; i < strlen(str); ++i) {
+        usart_send(str[i]);
     }
-    return USART1->DR;
+}
+
+
+
+
+uint8_t buffer[100]={0};
+uint8_t len = 0;
+uint8_t isToSend = 0;
+void USART1_IRQHandler(void) {
+    if (USART1->SR & USART_SR_RXNE) {
+        buffer[len] = USART1->DR;
+        len++;
+    }else if (USART1->SR & USART_SR_IDLE) {
+        USART1->SR;
+        USART1->DR;
+        isToSend=1;
+    }
 }

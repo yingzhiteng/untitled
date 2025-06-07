@@ -6,7 +6,9 @@
 #define USART_H
 #include "stm32f103xb.h"
 #include <stdint.h>
+#include <string.h>
 void usart_init(void);
 void usart_send(uint8_t c);
-uint8_t usart_receive(void);
+void usart_sendStr(char* str);
+void USART1_IRQHandler(void);
 #endif //USART_H
